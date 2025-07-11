@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiNAS - AI File Server</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-brain"></i>
+                AiNAS
+            </div>
+            <div class="header-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Ask a question about your files..." onkeypress="handleSearch(event)">
+            </div>
+        </div>
+        <div class="header-right">
+            <div class="header-actions">
+                <button class="btn btn-primary" onclick="toggleUpload()">
+                    <i class="fas fa-plus"></i>
+                    Upload
+                </button>
+                <button class="btn" onclick="refreshFiles()">
+                    <i class="fas fa-sync"></i>
+                    Refresh
+                </button>
+                <button class="btn" onclick="toggleSettings()">
+                    <i class="fas fa-cog"></i>
+                    Settings
+                </button>
+            </div>
+            <div class="storage-info">
+                <div class="storage-bar">
+                    <div class="storage-fill"></div>
+                </div>
+                <span>1.2 TB / 2 TB</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="sidebar">
+            <div class="sidebar-item active" onclick="selectFolder('/')">
+                <i class="fas fa-folder folder-icon"></i>
+                My Drive
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/documents')">
+                <i class="fas fa-folder folder-icon"></i>
+                Documents
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/images')">
+                <i class="fas fa-folder folder-icon"></i>
+                Images
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/videos')">
+                <i class="fas fa-folder folder-icon"></i>
+                Videos
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/archive')">
+                <i class="fas fa-folder folder-icon"></i>
+                Archive
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/recent')">
+                <i class="fas fa-clock"></i>
+                Recent
+            </div>
+            <div class="sidebar-item" onclick="selectFolder('/trash')">
+                <i class="fas fa-trash"></i>
+                Trash
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="view-controls">
+                <div class="breadcrumb">
+                    <i class="fas fa-folder"></i>
+                    <span>My Drive</span>
+                </div>
+                <div class="view-toggles">
+                    <button class="view-btn active" onclick="switchView('grid')" title="Grid View">
+                        <i class="fas fa-th"></i>
+                    </button>
+                    <button class="view-btn" onclick="switchView('list')" title="List View">
+                        <i class="fas fa-list"></i>
+                    </button>
+                    <button class="view-btn" onclick="switchView('preview')" title="Preview View">
+                        <i class="fas fa-th-large"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div class="file-grid active" id="gridView">
+                <div class="file-item" onclick="openFile('Service Contract 2024.pdf')">
+                    <div class="file-icon pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-name">Service Contract 2024</div>
+                    <div class="file-size">245 KB</div>
+                </div>
+
+                <div class="file-item" onclick="openFile('Tax Documents 2024.xlsx')">
+                    <div class="file-icon xls">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="file-name">Tax Documents 2024</div>
+                    <div class="file-size">89 KB</div>
+                </div>
+
+                <div class="file-item" onclick="openFile('Project Notes.txt')">
+                    <div class="file-icon txt">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="file-name">Project Notes</div>
+                    <div class="file-size">15 KB</div>
+                </div>
+
+                <div class="file-item" onclick="openFile('Annual Report.docx')">
+                    <div class="file-icon doc">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <div class="file-name">Annual Report</div>
+                    <div class="file-size">156 KB</div>
+                </div>
+
+                <div class="file-item" onclick="selectFolder('/presentations')">
+                    <div class="file-icon folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-name">Presentations</div>
+                    <div class="file-size">8 items</div>
+                </div>
+
+                <div class="file-item" onclick="selectFolder('/reports')">
+                    <div class="file-icon folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-name">Reports</div>
+                    <div class="file-size">12 items</div>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div class="file-list" id="listView">
+                <div class="file-list-item" onclick="openFile('Service Contract 2024.pdf')">
+                    <div class="file-list-icon pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Service Contract 2024.pdf</div>
+                        <div class="file-list-meta">
+                            <span>245 KB</span>
+                            <span>Modified: Jan 15, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-list-item" onclick="openFile('Tax Documents 2024.xlsx')">
+                    <div class="file-list-icon xls">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Tax Documents 2024.xlsx</div>
+                        <div class="file-list-meta">
+                            <span>89 KB</span>
+                            <span>Modified: Feb 3, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-list-item" onclick="openFile('Project Notes.txt')">
+                    <div class="file-list-icon txt">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Project Notes.txt</div>
+                        <div class="file-list-meta">
+                            <span>15 KB</span>
+                            <span>Modified: Mar 10, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-list-item" onclick="openFile('Annual Report.docx')">
+                    <div class="file-list-icon doc">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Annual Report.docx</div>
+                        <div class="file-list-meta">
+                            <span>156 KB</span>
+                            <span>Modified: Apr 5, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-list-item" onclick="selectFolder('/presentations')">
+                    <div class="file-list-icon folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Presentations</div>
+                        <div class="file-list-meta">
+                            <span>8 items</span>
+                            <span>Modified: May 12, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="file-list-item" onclick="selectFolder('/reports')">
+                    <div class="file-list-icon folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-list-details">
+                        <div class="file-list-name">Reports</div>
+                        <div class="file-list-meta">
+                            <span>12 items</span>
+                            <span>Modified: Jun 8, 2024</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preview View -->
+            <div class="file-preview-grid" id="previewView">
+                <div class="file-preview-item" onclick="openFile('Service Contract 2024.pdf')">
+                    <div class="file-preview-thumbnail pdf">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Service Contract 2024.pdf</div>
+                        <div class="file-preview-size">245 KB</div>
+                    </div>
+                </div>
+
+                <div class="file-preview-item" onclick="openFile('Tax Documents 2024.xlsx')">
+                    <div class="file-preview-thumbnail xls">
+                        <i class="fas fa-file-excel"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Tax Documents 2024.xlsx</div>
+                        <div class="file-preview-size">89 KB</div>
+                    </div>
+                </div>
+
+                <div class="file-preview-item" onclick="openFile('Project Notes.txt')">
+                    <div class="file-preview-thumbnail txt">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Project Notes.txt</div>
+                        <div class="file-preview-size">15 KB</div>
+                    </div>
+                </div>
+
+                <div class="file-preview-item" onclick="openFile('Annual Report.docx')">
+                    <div class="file-preview-thumbnail doc">
+                        <i class="fas fa-file-word"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Annual Report.docx</div>
+                        <div class="file-preview-size">156 KB</div>
+                    </div>
+                </div>
+
+                <div class="file-preview-item" onclick="selectFolder('/presentations')">
+                    <div class="file-preview-thumbnail folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Presentations</div>
+                        <div class="file-preview-size">8 items</div>
+                    </div>
+                </div>
+
+                <div class="file-preview-item" onclick="selectFolder('/reports')">
+                    <div class="file-preview-thumbnail folder">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="file-preview-info">
+                        <div class="file-preview-name">Reports</div>
+                        <div class="file-preview-size">12 items</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ai-response" id="aiResponse">
+        <div class="ai-header">
+            <i class="fas fa-robot"></i>
+            AI Assistant
+        </div>
+        <div class="ai-text" id="aiResponseText"></div>
+    </div>
+
+    <!-- Upload Modal -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content" style="max-width: 600px; height: auto;">
+            <div class="modal-header">
+                <div class="modal-title">Upload Files</div>
+                <button class="close-btn" onclick="closeModal('uploadModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-zone" ondrop="handleDrop(event)" ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)">
+                    <input type="file" id="fileInput" multiple onchange="handleFileSelect(event)">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3>Drop files here or click to select</h3>
+                    <p>Supports PDF, DOCX, TXT, XLSX and more</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Viewer Modal -->
+    <div class="modal" id="fileModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalFileName">File Preview</div>
+                <button class="close-btn" onclick="closeModal('fileModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="file-preview" id="filePreview">
+                    Loading file content...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let currentFolder = '/';
+        let currentView = 'grid';
+
+        // Search functionality
+        function handleSearch(event) {
+            if (event.key === 'Enter') {
+                const query = event.target.value.trim();
+                if (query) {
+                    performSearch(query);
+                }
+            }
+        }
+
+        function performSearch(query) {
+            const aiResponse = document.getElementById('aiResponse');
+            const aiResponseText = document.getElementById('aiResponseText');
+            
+            aiResponseText.innerHTML = `I found information about "${query}" in your files. Your tax documents show important deadlines, and the service contract contains relevant terms and conditions.`;
+            
+            aiResponse.classList.add('show');
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                aiResponse.classList.remove('show');
+            }, 5000);
+        }
+
+        // View switching
+        function switchView(viewType) {
+            currentView = viewType;
+            
+            // Update view buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Hide all views
+            document.getElementById('gridView').classList.remove('active');
+            document.getElementById('listView').classList.remove('active');
+            document.getElementById('previewView').classList.remove('active');
+            
+            // Show selected view
+            switch(viewType) {
+                case 'grid':
+                    document.getElementById('gridView').classList.add('active');
+                    break;
+                case 'list':
+                    document.getElementById('listView').classList.add('active');
+                    break;
+                case 'preview':
+                    document.getElementById('previewView').classList.add('active');
+                    break;
+            }
+        }
+
+        // File operations
+        function openFile(fileName) {
+            const modal = document.getElementById('fileModal');
+            const modalFileName = document.getElementById('modalFileName');
+            const filePreview = document.getElementById('filePreview');
+            
+            modalFileName.textContent = fileName;
+            
+            let content = '';
+            switch(fileName) {
+                case 'Service Contract 2024.pdf':
+                    content = `SERVICE AGREEMENT
+
+This Service Agreement is entered into on January 1, 2024.
+
+TERMS OF SERVICE:
+1. Payment due: May 1, 2024
+2. Total amount: $50,000
+3. Project duration: 6 months
+4. Deliverables: Monthly reports
+
+CONTACT:
+Project Manager: John Smith
+Email: john.smith@company.com`;
+                    break;
+                case 'Tax Documents 2024.xlsx':
+                    content = `TAX SUMMARY 2024
+
+Total Income: $125,000
+Total Deductions: $25,000
+Tax Liability: $20,000
+Due Date: April 15, 2024
+
+QUARTERLY PAYMENTS:
+Q1: $5,000 - PAID
+Q2: $5,000 - PAID
+Q3: $5,000 - PENDING
+Q4: $5,000 - PENDING`;
+                    break;
+                default:
+                    content = `File: ${fileName}
+
+This is a preview of the file content. In a real implementation, this would display the actual file content or a rendered preview based on the file type.`;
+            }
+            
+            filePreview.textContent = content;
+            modal.classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        // Upload functionality
+        function toggleUpload() {
+            document.getElementById('uploadModal').classList.add('show');
+        }
+
+        function handleDrop(event) {
+            event.preventDefault();
+            const files = event.dataTransfer.files;
+            handleFiles(files);
+            event.target.classList.remove('dragover');
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.target.classList.add('dragover');
+        }
+
+        function handleDragLeave(event) {
+            event.target.classList.remove('dragover');
+        }
+
+        function handleFileSelect(event) {
+            const files = event.target.files;
+            handleFiles(files);
+        }
+
+        function handleFiles(files) {
+            for (let file of files) {
+                console.log('Uploading:', file.name);
+            }
+            closeModal('uploadModal');
+        }
+
+        // Navigation functions
+        function refreshFiles() {
+            const btn = event.target;
+            const icon = btn.querySelector('i');
+            icon.className = 'fas fa-spinner fa-spin';
+            
+            setTimeout(() => {
+                icon.className = 'fas fa-sync';
+            }, 1500);
+        }
+
+        function toggleSettings() {
+            alert('Settings panel would open here');
+        }
+
+        function selectFolder(path) {
+            currentFolder = path;
+            
+            // Update active state
+            document.querySelectorAll('.sidebar-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update breadcrumb
+            const breadcrumb = document.querySelector('.breadcrumb span');
+            const folderName = path === '/' ? 'My Drive' : path.replace('/', '').replace(/\b\w/g, l => l.toUpperCase());
+            breadcrumb.textContent = folderName;
+            
+            // Update file grid based on folder
+            console.log('Selected folder:', path);
+        }
+
+        // Close AI response when clicking outside
+        document.addEventListener('click', function(event) {
+            const aiResponse = document.getElementById('aiResponse');
+            const searchContainer = document.querySelector('.header-search');
+            
+            if (!searchContainer.contains(event.target) && !aiResponse.contains(event.target)) {
+                aiResponse.classList.remove('show');
+            }
+        });
+    </script>
+</body>
+</html>
